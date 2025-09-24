@@ -1,0 +1,54 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+.report/
+
+# Node.js
+# dependency directories
+node_modules/
+/jspm_packages/
+
+# production
+/dist
+/build
+
+# misc
+.npm
+.eslintcache
+.prettierignore
+.prettierrc.js
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvsps
+*.njsproj
+*.sln
+*.bak
+
+# Frontend specific
+frontend/dist/
+
+# Backend specific
+backend/node_modules/
+backend/dist/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Trashes
