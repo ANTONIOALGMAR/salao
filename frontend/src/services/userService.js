@@ -1,3 +1,10 @@
+/**
+ * @function getEmployees
+ * @description Busca a lista de funcionários (usuários com perfil 'employee') da API.
+ * @param {string} token - Token de autenticação do usuário.
+ * @returns {Promise<Array>} Uma promessa que resolve com uma lista de objetos de funcionários.
+ * @throws {Error} Se a requisição falhar ou retornar um erro.
+ */
 const getEmployees = async (token) => {
   try {
     const res = await fetch('/api/users?role=employee', {
@@ -17,6 +24,13 @@ const getEmployees = async (token) => {
   }
 };
 
+/**
+ * @function loginUser
+ * @description Realiza o login de um usuário na API.
+ * @param {object} credentials - Objeto contendo email e senha do usuário.
+ * @returns {Promise<object>} Uma promessa que resolve com os dados do usuário logado (incluindo token).
+ * @throws {Error} Se a requisição falhar ou retornar um erro.
+ */
 const loginUser = async (credentials) => {
   try {
     const res = await fetch('/api/users/login', {
@@ -40,6 +54,13 @@ const loginUser = async (credentials) => {
   }
 };
 
+/**
+ * @function registerUser
+ * @description Registra um novo usuário na API.
+ * @param {object} userData - Objeto contendo nome, email, senha e perfil do usuário.
+ * @returns {Promise<object>} Uma promessa que resolve com os dados do usuário registrado (incluindo token).
+ * @throws {Error} Se a requisição falhar ou retornar um erro.
+ */
 const registerUser = async (userData) => {
   try {
     const res = await fetch('/api/users', {

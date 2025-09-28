@@ -4,7 +4,8 @@ const notFound = (req, res, next) => {
   next(error);
 };
 
-const errorHandler = (err, req, res, next) => {
+// eslint-disable-next-line no-unused-vars
+const errorHandler = (err, req, res, _next) => {
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   res.status(statusCode);
   res.json({

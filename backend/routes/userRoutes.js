@@ -1,6 +1,11 @@
 const express = require('express');
+
 const router = express.Router();
-const { authUser, registerUser, getUsers } = require('../controllers/userController');
+const {
+  authUser,
+  registerUser,
+  getUsers,
+} = require('../controllers/userController');
 
 router.use((req, res, next) => {
   console.log('Request hit userRoutes:', req.method, req.url);

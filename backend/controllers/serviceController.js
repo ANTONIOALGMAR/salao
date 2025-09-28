@@ -88,4 +88,10 @@ const deleteService = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { createService, getServices, getServiceById, updateService, deleteService };
+module.exports = {
+  createService,
+  getServices,
+  getServiceById,
+  updateService,
+  deleteService,
+};

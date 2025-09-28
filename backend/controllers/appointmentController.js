@@ -1,7 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Appointment = require('../models/Appointment');
 const Service = require('../models/Service');
-const User = require('../models/User');
 
 // Helper function to calculate end time
 const calculateEndTime = (startTime, duration) => {
@@ -149,18 +148,23 @@ const getAvailableSlots = asyncHandler(async (req, res) => {
     date: requestedDate,
   }).select('startTime endTime');
 
-  const bookedSlots = appointments.map(app => ({
+  const bookedSlots = appointments.map((app) => ({
     start: app.startTime,
     end: app.endTime,
   }));
 
   const availableSlots = [];
-  for (let time = workingHoursStart; time < workingHoursEnd; time += slotDuration) {
+  for (
+    let time = workingHoursStart;
+    time < workingHoursEnd;
+    time += slotDuration
+  ) {
     const currentSlotStart = `${String(Math.floor(time / 60)).padStart(2, '0')}:${String(time % 60).padStart(2, '0')}`;
     const currentSlotEnd = `${String(Math.floor((time + slotDuration) / 60)).padStart(2, '0')}:${String((time + slotDuration) % 60).padStart(2, '0')}`;
 
     let isBooked = false;
-    for (const booked of bookedSlots) {
+    for (let i = 0; i < bookedSlots.length; i += 1) {
+      const booked = bookedSlots[i];
       // Check for overlap: (start1 < end2 && end1 > start2)
       if (currentSlotStart < booked.end && currentSlotEnd > booked.start) {
         isBooked = true;
@@ -176,4 +180,11 @@ const getAvailableSlots = asyncHandler(async (req, res) => {
   res.json(availableSlots);
 });
 
-module.exports = { createAppointment, getAppointments, getAppointmentById, updateAppointment, deleteAppointment, getAvailableSlots };
+module.exports = {
+  createAppointment,
+  getAppointments,
+  getAppointmentById,
+  updateAppointment,
+  deleteAppointment,
+  getAvailableSlots,
+};

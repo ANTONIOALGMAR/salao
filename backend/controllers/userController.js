@@ -64,7 +64,7 @@ const registerUser = asyncHandler(async (req, res) => {
 const getUsers = asyncHandler(async (req, res) => {
   console.log('getUsers controller hit!', req.query);
   const { role } = req.query;
-  let query = {};
+  const query = {};
 
   if (role) {
     query.role = role;

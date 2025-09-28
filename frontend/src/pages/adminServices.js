@@ -1,4 +1,8 @@
-export const renderAdminServicesPage = (adminContentArea, userInfo, showServicesPage) => {
+export const renderAdminServicesPage = (
+  adminContentArea,
+  userInfo,
+  showServicesPage,
+) => {
   adminContentArea.innerHTML = `
     <div id="admin-services-container" class="bg-gray-100 p-6 rounded-lg shadow-md">
       <h3 class="text-xl font-semibold mb-4">Adicionar Novo Serviço</h3>
@@ -57,7 +61,9 @@ export const renderAdminServicesPage = (adminContentArea, userInfo, showServices
   `;
 
   const addServiceForm = document.getElementById('add-service-form');
-  const editServiceFormContainer = document.getElementById('edit-service-form-container');
+  const editServiceFormContainer = document.getElementById(
+    'edit-service-form-container',
+  );
   const editServiceForm = document.getElementById('edit-service-form');
   const cancelEditBtn = document.getElementById('cancel-edit-btn');
   const adminServicesListDiv = document.getElementById('admin-services-list');
@@ -69,7 +75,9 @@ export const renderAdminServicesPage = (adminContentArea, userInfo, showServices
 
       if (res.ok) {
         if (services.length > 0) {
-          adminServicesListDiv.innerHTML = services.map(service => `
+          adminServicesListDiv.innerHTML = services
+            .map(
+              (service) => `
             <div class="bg-white p-4 rounded-lg shadow-md">
               <h3 class="text-xl font-bold mb-2">${service.name}</h3>
               <p class="text-gray-700 mb-2">${service.description}</p>
@@ -78,10 +86,12 @@ export const renderAdminServicesPage = (adminContentArea, userInfo, showServices
               <button class="mt-4 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded edit-service-btn" data-id="${service._id}" data-name="${service.name}" data-description="${service.description}" data-price="${service.price}" data-duration="${service.duration}">Editar</button>
               <button class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded delete-service-btn" data-id="${service._id}">Excluir</button>
             </div>
-          `).join('');
+          `,
+            )
+            .join('');
 
           // Add event listeners for edit/delete buttons
-          document.querySelectorAll('.edit-service-btn').forEach(button => {
+          document.querySelectorAll('.edit-service-btn').forEach((button) => {
             button.addEventListener('click', (e) => {
               const serviceId = e.target.dataset.id;
               const serviceName = e.target.dataset.name;
@@ -92,15 +102,18 @@ export const renderAdminServicesPage = (adminContentArea, userInfo, showServices
               // Populate edit form
               document.getElementById('edit-service-id').value = serviceId;
               document.getElementById('edit-service-name').value = serviceName;
-              document.getElementById('edit-service-description').value = serviceDescription;
-              document.getElementById('edit-service-price').value = servicePrice;
-              document.getElementById('edit-service-duration').value = serviceDuration;
+              document.getElementById('edit-service-description').value =
+                serviceDescription;
+              document.getElementById('edit-service-price').value =
+                servicePrice;
+              document.getElementById('edit-service-duration').value =
+                serviceDuration;
 
               // Show edit form
               editServiceFormContainer.classList.remove('hidden');
             });
           });
-          document.querySelectorAll('.delete-service-btn').forEach(button => {
+          document.querySelectorAll('.delete-service-btn').forEach((button) => {
             button.addEventListener('click', async (e) => {
               const serviceId = e.target.dataset.id;
               if (confirm('Tem certeza que deseja excluir este serviço?')) {
@@ -126,16 +139,17 @@ export const renderAdminServicesPage = (adminContentArea, userInfo, showServices
               }
             });
           });
-
         } else {
-          adminServicesListDiv.innerHTML = '<p>Nenhum serviço disponível para gerenciar.</p>';
+          adminServicesListDiv.innerHTML =
+            '<p>Nenhum serviço disponível para gerenciar.</p>';
         }
       } else {
         adminServicesListDiv.innerHTML = `<p>Erro ao carregar serviços: ${services.message || 'Erro desconhecido'}</p>`;
       }
     } catch (error) {
       console.error('Erro ao buscar serviços:', error);
-      adminServicesListDiv.innerHTML = '<p>Erro ao buscar serviços. Tente novamente mais tarde.</p>';
+      adminServicesListDiv.innerHTML =
+        '<p>Erro ao buscar serviços. Tente novamente mais tarde.</p>';
     }
   };
 
@@ -144,7 +158,9 @@ export const renderAdminServicesPage = (adminContentArea, userInfo, showServices
     const name = document.getElementById('service-name').value;
     const description = document.getElementById('service-description').value;
     const price = parseFloat(document.getElementById('service-price').value);
-    const duration = parseInt(document.getElementById('service-duration').value);
+    const duration = parseInt(
+      document.getElementById('service-duration').value,
+    );
 
     if (!name || !price || !duration) {
       alert('Por favor, preencha todos os campos obrigatórios.');
@@ -186,9 +202,15 @@ export const renderAdminServicesPage = (adminContentArea, userInfo, showServices
     e.preventDefault();
     const serviceId = document.getElementById('edit-service-id').value;
     const name = document.getElementById('edit-service-name').value;
-    const description = document.getElementById('edit-service-description').value;
-    const price = parseFloat(document.getElementById('edit-service-price').value);
-    const duration = parseInt(document.getElementById('edit-service-duration').value);
+    const description = document.getElementById(
+      'edit-service-description',
+    ).value;
+    const price = parseFloat(
+      document.getElementById('edit-service-price').value,
+    );
+    const duration = parseInt(
+      document.getElementById('edit-service-duration').value,
+    );
 
     if (!name || !price || !duration) {
       alert('Por favor, preencha todos os campos obrigatórios.');

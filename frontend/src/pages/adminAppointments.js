@@ -8,7 +8,9 @@ export const renderAdminAppointmentsPage = (adminContentArea, userInfo) => {
     </div>
   `;
 
-  const allAppointmentsListDiv = document.getElementById('all-appointments-list');
+  const allAppointmentsListDiv = document.getElementById(
+    'all-appointments-list',
+  );
 
   const fetchAllAppointments = async () => {
     console.log('Fetching all appointments with token:', userInfo.token);
@@ -23,7 +25,9 @@ export const renderAdminAppointmentsPage = (adminContentArea, userInfo) => {
 
       if (res.ok) {
         if (appointments.length > 0) {
-          allAppointmentsListDiv.innerHTML = appointments.map(app => `
+          allAppointmentsListDiv.innerHTML = appointments
+            .map(
+              (app) => `
             <div class="bg-white p-4 rounded-lg shadow-md mb-2">
               <p><strong>Cliente:</strong> ${app.client.name}</p>
               <p><strong>Profissional:</strong> ${app.employee.name}</p>
@@ -40,22 +44,31 @@ export const renderAdminAppointmentsPage = (adminContentArea, userInfo) => {
               </p>
               <button class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded delete-appointment-btn" data-id="${app._id}">Excluir</button>
             </div>
-          `).join('');
+          `,
+            )
+            .join('');
 
-          document.querySelectorAll('.status-select').forEach(select => {
+          document.querySelectorAll('.status-select').forEach((select) => {
             select.addEventListener('change', async (e) => {
               const appointmentId = e.target.dataset.id;
               const newStatus = e.target.value;
-              if (confirm(`Tem certeza que deseja alterar o status para ${newStatus}?`)) {
+              if (
+                confirm(
+                  `Tem certeza que deseja alterar o status para ${newStatus}?`,
+                )
+              ) {
                 try {
-                  const updateRes = await fetch(`/api/appointments/${appointmentId}`, {
-                    method: 'PUT',
-                    headers: {
-                      'Content-Type': 'application/json',
-                      Authorization: `Bearer ${userInfo.token}`,
+                  const updateRes = await fetch(
+                    `/api/appointments/${appointmentId}`,
+                    {
+                      method: 'PUT',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${userInfo.token}`,
+                      },
+                      body: JSON.stringify({ status: newStatus }),
                     },
-                    body: JSON.stringify({ status: newStatus }),
-                  });
+                  );
                   if (updateRes.ok) {
                     alert('Status do agendamento atualizado!');
                     fetchAllAppointments(); // Refresh list
@@ -71,41 +84,51 @@ export const renderAdminAppointmentsPage = (adminContentArea, userInfo) => {
             });
           });
 
-          document.querySelectorAll('.delete-appointment-btn').forEach(button => {
-            button.addEventListener('click', async (e) => {
-            const appointmentId = e.target.dataset.id;
-              if (confirm('Tem certeza que deseja excluir este agendamento?')) {
-                try {
-                  const deleteRes = await fetch(`/api/appointments/${appointmentId}`, {
-                    method: 'DELETE',
-                    headers: {
-                      Authorization: `Bearer ${userInfo.token}`,
-                    },
-                  });
-                  if (deleteRes.ok) {
-                    alert('Agendamento excluído com sucesso!');
-                    fetchAllAppointments(); // Refresh list
-                  } else {
-                    const errorData = await deleteRes.json();
-                    alert(errorData.message || 'Erro ao excluir agendamento.');
+          document
+            .querySelectorAll('.delete-appointment-btn')
+            .forEach((button) => {
+              button.addEventListener('click', async (e) => {
+                const appointmentId = e.target.dataset.id;
+                if (
+                  confirm('Tem certeza que deseja excluir este agendamento?')
+                ) {
+                  try {
+                    const deleteRes = await fetch(
+                      `/api/appointments/${appointmentId}`,
+                      {
+                        method: 'DELETE',
+                        headers: {
+                          Authorization: `Bearer ${userInfo.token}`,
+                        },
+                      },
+                    );
+                    if (deleteRes.ok) {
+                      alert('Agendamento excluído com sucesso!');
+                      fetchAllAppointments(); // Refresh list
+                    } else {
+                      const errorData = await deleteRes.json();
+                      alert(
+                        errorData.message || 'Erro ao excluir agendamento.',
+                      );
+                    }
+                  } catch (error) {
+                    console.error('Erro ao excluir agendamento:', error);
+                    alert('Erro ao excluir agendamento.');
                   }
-                } catch (error) {
-                  console.error('Erro ao excluir agendamento:', error);
-                  alert('Erro ao excluir agendamento.');
                 }
-              }
+              });
             });
-          });
-
         } else {
-          allAppointmentsListDiv.innerHTML = '<p>Nenhum agendamento encontrado.</p>';
+          allAppointmentsListDiv.innerHTML =
+            '<p>Nenhum agendamento encontrado.</p>';
         }
       } else {
         allAppointmentsListDiv.innerHTML = `<p>Erro ao carregar agendamentos: ${appointments.message || 'Erro desconhecido'}</p>`;
       }
     } catch (error) {
       console.error('Erro ao buscar agendamentos:', error);
-      allAppointmentsListDiv.innerHTML = '<p>Erro ao buscar agendamentos. Tente novamente mais tarde.</p>';
+      allAppointmentsListDiv.innerHTML =
+        '<p>Erro ao buscar agendamentos. Tente novamente mais tarde.</p>';
     }
   };
 

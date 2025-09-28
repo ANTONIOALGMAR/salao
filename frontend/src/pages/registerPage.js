@@ -1,6 +1,21 @@
+// Importa a função de serviço para realizar o registro de novos usuários
 import { registerUser } from '../services/userService';
 
-const showRegisterPage = (renderContent, showHomePage, showLoginPage, updateNav) => {
+/**
+ * @function showRegisterPage
+ * @description Renderiza a página de registro, permitindo ao usuário criar uma nova conta.
+ * @param {function} renderContent - Função para renderizar o conteúdo principal na div #content.
+ * @param {function} showHomePage - Função para exibir a página inicial após o registro bem-sucedido.
+ * @param {function} showLoginPage - Função para exibir a página de login.
+ * @param {function} updateNav - Função para atualizar a navegação após o registro.
+ */
+const showRegisterPage = (
+  renderContent,
+  showHomePage,
+  showLoginPage,
+  updateNav,
+) => {
+  // Renderiza a estrutura HTML do formulário de registro
   renderContent(`
     <h2 class="text-2xl font-semibold mb-4">Criar Conta</h2>
     <form id="register-form" class="max-w-sm mx-auto bg-gray-100 p-6 rounded-lg shadow-md">
@@ -34,36 +49,46 @@ const showRegisterPage = (renderContent, showHomePage, showLoginPage, updateNav)
       </div>
     </form>
   `);
+
+  // Obtém o formulário de registro
   const registerForm = document.getElementById('register-form');
   if (registerForm) {
+    // Adiciona um listener para o evento de submit do formulário
     registerForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+      e.preventDefault(); // Previne o comportamento padrão de submit do formulário
       const name = document.getElementById('name').value;
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
       const role = document.getElementById('role').value;
 
+      // Validação simples de senha
       if (password !== confirmPassword) {
         alert('As senhas não coincidem!');
         return;
       }
 
       try {
+        // Tenta realizar o registro via API
         const data = await registerUser({ name, email, password, role });
-        localStorage.setItem('userInfo', JSON.stringify(data));
+        localStorage.setItem('userInfo', JSON.stringify(data)); // Armazena as informações do usuário
         alert('Registro bem-sucedido!');
-        showHomePage(renderContent);
-        updateNav();
+        showHomePage(renderContent); // Redireciona para a página inicial
+        updateNav(); // Atualiza a navegação
       } catch (error) {
-        alert(error.message);
+        alert(error.message); // Exibe mensagem de erro em caso de falha no registro
       }
     });
   }
 
+  // Obtém o link para a página de login
   const loginLink = document.getElementById('login-link');
   if (loginLink) {
-    loginLink.addEventListener('click', (e) => { e.preventDefault(); showLoginPage(renderContent, showHomePage, showRegisterPage, updateNav); });
+    // Adiciona um listener para o clique no link de login
+    loginLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      showLoginPage(renderContent, showHomePage, showRegisterPage, updateNav);
+    });
   }
 };
 

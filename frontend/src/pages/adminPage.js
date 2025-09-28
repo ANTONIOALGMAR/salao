@@ -1,7 +1,21 @@
+// Importa as funções de renderização para as sub-páginas administrativas de serviços e agendamentos
 import { renderAdminServicesPage } from './adminServices';
 import { renderAdminAppointmentsPage } from './adminAppointments';
 
-const showAdminPage = (renderContent, userInfo, showServicesPage) => {
+/**
+ * @function showAdminPage
+ * @description Renderiza a página do painel administrativo, permitindo a navegação entre o gerenciamento de serviços e agendamentos.
+ * @param {function} renderContent - Função para renderizar o conteúdo principal na div #content.
+ * @param {object} userInfo - Objeto contendo as informações do usuário logado (admin).
+ * @param {function} showServicesPage - Função para exibir a página de serviços (usada para atualizar a lista de serviços).
+ */
+const showAdminPage = (
+  renderContent,
+  userInfo,
+  showServicesPage,
+  renderContentFromMain,
+) => {
+  // Renderiza a estrutura HTML inicial do painel administrativo
   renderContent(`
     <h2 class="text-2xl font-semibold mb-4">Painel Administrativo</h2>
     <nav class="mb-6">
@@ -11,18 +25,41 @@ const showAdminPage = (renderContent, userInfo, showServicesPage) => {
       </ul>
     </nav>
     <div id="admin-content-area">
-      <!-- Content for services or appointments will be loaded here -->
+      <!-- O conteúdo para serviços ou agendamentos será carregado aqui -->
     </div>
   `);
 
+  // Obtém referências aos elementos do DOM dentro da área administrativa
   const adminContentArea = document.getElementById('admin-content-area');
   const adminNavServices = document.getElementById('admin-nav-services');
-  const adminNavAppointments = document.getElementById('admin-nav-appointments');
+  const adminNavAppointments = document.getElementById(
+    'admin-nav-appointments',
+  );
 
-  adminNavServices.addEventListener('click', () => renderAdminServicesPage(adminContentArea, userInfo, showServicesPage));
-  adminNavAppointments.addEventListener('click', () => renderAdminAppointmentsPage(adminContentArea, userInfo));
+  // Adiciona listeners para os botões de navegação administrativa
+  adminNavServices.addEventListener('click', () =>
+    renderAdminServicesPage(
+      adminContentArea,
+      userInfo,
+      showServicesPage,
+      renderContentFromMain,
+    ),
+  );
+  adminNavAppointments.addEventListener('click', () =>
+    renderAdminAppointmentsPage(
+      adminContentArea,
+      userInfo,
+      renderContentFromMain,
+    ),
+  );
 
-  renderAdminServicesPage(adminContentArea, userInfo, showServicesPage); // Default view
+  // Renderiza a página de gerenciamento de serviços como visualização padrão ao entrar no painel
+  renderAdminServicesPage(
+    adminContentArea,
+    userInfo,
+    showServicesPage,
+    renderContentFromMain,
+  ); // Visualização padrão
 };
 
 export { showAdminPage };

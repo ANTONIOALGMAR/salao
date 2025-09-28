@@ -1,3 +1,4 @@
+// Importa as funções de serviço para interagir com a API de usuários, serviços e agendamentos
 import { getEmployees } from '../services/userService';
 import { getServices } from '../services/serviceService';
 import {
@@ -8,7 +9,13 @@ import {
   createAppointment,
 } from '../services/appointmentService';
 
+/**
+ * @function showAppointmentsPage
+ * @description Renderiza a página de agendamento, permitindo ao usuário agendar novos horários e visualizar/gerenciar seus agendamentos existentes.
+ * @param {function} renderContent - Função para renderizar o conteúdo principal na div #content.
+ */
 const showAppointmentsPage = async (renderContent) => {
+  // Renderiza a estrutura HTML inicial da página de agendamento
   renderContent(`
     <h2 class="text-2xl font-semibold mb-4">Agendar Horário</h2>
     <div id="appointment-form-container" class="max-w-md mx-auto bg-gray-100 p-6 rounded-lg shadow-md">
@@ -44,6 +51,7 @@ const showAppointmentsPage = async (renderContent) => {
     </div>
   `);
 
+  // Obtém referências aos elementos do DOM
   const employeeSelect = document.getElementById('employee-select');
   const serviceSelect = document.getElementById('service-select');
   const appointmentDateInput = document.getElementById('appointment-date');
@@ -51,17 +59,24 @@ const showAppointmentsPage = async (renderContent) => {
   const appointmentForm = document.getElementById('appointment-form');
   const myAppointmentsListDiv = document.getElementById('my-appointments-list');
 
+  // Verifica se o usuário está logado
   const userInfo = JSON.parse(localStorage.getItem('userInfo'));
   if (!userInfo) {
-    myAppointmentsListDiv.innerHTML = '<p>Por favor, faça login para ver e agendar horários.</p>';
+    myAppointmentsListDiv.innerHTML =
+      '<p>Por favor, faça login para ver e agendar horários.</p>';
     return;
   }
 
+  /**
+   * @function populateEmployees
+   * @description Busca e preenche o select de profissionais disponíveis.
+   */
   const populateEmployees = async () => {
     try {
       const employees = await getEmployees(userInfo.token);
-      employeeSelect.innerHTML = '<option value="">Selecione um profissional</option>';
-      employees.forEach(emp => {
+      employeeSelect.innerHTML =
+        '<option value="">Selecione um profissional</option>';
+      employees.forEach((emp) => {
         const option = document.createElement('option');
         option.value = emp._id;
         option.textContent = emp.name;
@@ -72,11 +87,16 @@ const showAppointmentsPage = async (renderContent) => {
     }
   };
 
+  /**
+   * @function populateServices
+   * @description Busca e preenche o select de serviços disponíveis.
+   */
   const populateServices = async () => {
     try {
       const services = await getServices();
-      serviceSelect.innerHTML = '<option value="">Selecione um serviço</option>';
-      services.forEach(service => {
+      serviceSelect.innerHTML =
+        '<option value="">Selecione um serviço</option>';
+      services.forEach((service) => {
         const option = document.createElement('option');
         option.value = service._id;
         option.textContent = `${service.name} (R$ ${service.price.toFixed(2)})`;
@@ -87,37 +107,50 @@ const showAppointmentsPage = async (renderContent) => {
     }
   };
 
+  /**
+   * @function populateAvailableSlots
+   * @description Busca e preenche o select de horários disponíveis com base no profissional e data selecionados.
+   */
   const populateAvailableSlots = async () => {
     const employeeId = employeeSelect.value;
     const date = appointmentDateInput.value;
     if (!employeeId || !date) {
-      timeSlotSelect.innerHTML = '<option value="">Selecione profissional e data</option>';
+      timeSlotSelect.innerHTML =
+        '<option value="">Selecione profissional e data</option>';
       return;
     }
 
     try {
       const slots = await getAvailableSlots(employeeId, date);
-      timeSlotSelect.innerHTML = '<option value="">Selecione um horário</option>';
+      timeSlotSelect.innerHTML =
+        '<option value="">Selecione um horário</option>';
       if (slots.length > 0) {
-        slots.forEach(slot => {
+        slots.forEach((slot) => {
           const option = document.createElement('option');
           option.value = slot;
           option.textContent = slot;
           timeSlotSelect.appendChild(option);
         });
       } else {
-        timeSlotSelect.innerHTML = '<option value="">Nenhum horário disponível</option>';
+        timeSlotSelect.innerHTML =
+          '<option value="">Nenhum horário disponível</option>';
       }
     } catch (error) {
       console.error('Erro ao buscar horários:', error);
     }
   };
 
+  /**
+   * @function renderMyAppointments
+   * @description Busca e renderiza a lista de agendamentos do usuário logado.
+   */
   const renderMyAppointments = async () => {
     try {
       const appointments = await getUserAppointments(userInfo.token);
       if (appointments.length > 0) {
-        myAppointmentsListDiv.innerHTML = appointments.map(app => `
+        myAppointmentsListDiv.innerHTML = appointments
+          .map(
+            (app) => `
           <div class="bg-white p-4 rounded-lg shadow-md mb-2">
             <p><strong>Cliente:</strong> ${app.client.name}</p>
             <p><strong>Profissional:</strong> ${app.employee.name}</p>
@@ -134,17 +167,28 @@ const showAppointmentsPage = async (renderContent) => {
             </p>
             <button class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded delete-appointment-btn" data-id="${app._id}">Excluir</button>
           </div>
-        `).join('');
+        `,
+          )
+          .join('');
 
-        document.querySelectorAll('.status-select').forEach(select => {
+        // Adiciona listeners para alteração de status e exclusão de agendamento
+        document.querySelectorAll('.status-select').forEach((select) => {
           select.addEventListener('change', async (e) => {
             const appointmentId = e.target.dataset.id;
             const newStatus = e.target.value;
-            if (confirm(`Tem certeza que deseja alterar o status para ${newStatus}?`)) {
+            if (
+              confirm(
+                `Tem certeza que deseja alterar o status para ${newStatus}?`,
+              )
+            ) {
               try {
-                await updateAppointmentStatus(appointmentId, newStatus, userInfo.token);
+                await updateAppointmentStatus(
+                  appointmentId,
+                  newStatus,
+                  userInfo.token,
+                );
                 alert('Status do agendamento atualizado!');
-                renderMyAppointments(); // Refresh list
+                renderMyAppointments(); // Atualiza a lista após a alteração
               } catch (error) {
                 alert(error.message);
               }
@@ -152,29 +196,32 @@ const showAppointmentsPage = async (renderContent) => {
           });
         });
 
-        document.querySelectorAll('.delete-appointment-btn').forEach(button => {
-          button.addEventListener('click', async (e) => {
-            const appointmentId = e.target.dataset.id;
-            if (confirm('Tem certeza que deseja excluir este agendamento?')) {
-              try {
-                await deleteAppointment(appointmentId, userInfo.token);
-                alert('Agendamento excluído com sucesso!');
-                renderMyAppointments(); // Refresh list
-              } catch (error) {
-                alert(error.message);
+        document
+          .querySelectorAll('.delete-appointment-btn')
+          .forEach((button) => {
+            button.addEventListener('click', async (e) => {
+              const appointmentId = e.target.dataset.id;
+              if (confirm('Tem certeza que deseja excluir este agendamento?')) {
+                try {
+                  await deleteAppointment(appointmentId, userInfo.token);
+                  alert('Agendamento excluído com sucesso!');
+                  renderMyAppointments(); // Atualiza a lista após a exclusão
+                } catch (error) {
+                  alert(error.message);
+                }
               }
-            }
+            });
           });
-        });
-
       } else {
-        myAppointmentsListDiv.innerHTML = '<p>Nenhum agendamento encontrado.</p>';
+        myAppointmentsListDiv.innerHTML =
+          '<p>Nenhum agendamento encontrado.</p>';
       }
     } catch (error) {
       myAppointmentsListDiv.innerHTML = `<p>${error.message}</p>`;
     }
   };
 
+  // Adiciona listener para o formulário de agendamento
   appointmentForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const appointmentData = {
@@ -187,15 +234,17 @@ const showAppointmentsPage = async (renderContent) => {
     try {
       await createAppointment(appointmentData, userInfo.token);
       alert('Agendamento criado com sucesso!');
-      renderMyAppointments();
+      renderMyAppointments(); // Atualiza a lista após criar um novo agendamento
     } catch (error) {
       alert(error.message);
     }
   });
 
+  // Adiciona listeners para popular horários disponíveis ao mudar profissional ou data
   employeeSelect.addEventListener('change', populateAvailableSlots);
   appointmentDateInput.addEventListener('change', populateAvailableSlots);
 
+  // Funções de inicialização da página
   populateEmployees();
   populateServices();
   renderMyAppointments();

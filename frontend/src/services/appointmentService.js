@@ -1,7 +1,16 @@
-
+/**
+ * @function getAvailableSlots
+ * @description Busca horários disponíveis para agendamento de um profissional em uma data específica.
+ * @param {string} employeeId - ID do profissional.
+ * @param {string} date - Data para buscar horários (formato YYYY-MM-DD).
+ * @returns {Promise<Array>} Uma promessa que resolve com uma lista de horários disponíveis.
+ * @throws {Error} Se a requisição falhar ou retornar um erro.
+ */
 const getAvailableSlots = async (employeeId, date) => {
   try {
-    const res = await fetch(`/api/appointments/available/${employeeId}/${date}`);
+    const res = await fetch(
+      `/api/appointments/available/${employeeId}/${date}`,
+    );
     const slots = await res.json();
     if (res.ok) {
       return slots;
@@ -14,6 +23,13 @@ const getAvailableSlots = async (employeeId, date) => {
   }
 };
 
+/**
+ * @function getUserAppointments
+ * @description Busca todos os agendamentos do usuário logado.
+ * @param {string} token - Token de autenticação do usuário.
+ * @returns {Promise<Array>} Uma promessa que resolve com uma lista de agendamentos do usuário.
+ * @throws {Error} Se a requisição falhar ou retornar um erro.
+ */
 const getUserAppointments = async (token) => {
   try {
     const res = await fetch('/api/appointments', {
@@ -33,6 +49,15 @@ const getUserAppointments = async (token) => {
   }
 };
 
+/**
+ * @function updateAppointmentStatus
+ * @description Atualiza o status de um agendamento específico.
+ * @param {string} appointmentId - ID do agendamento a ser atualizado.
+ * @param {string} status - Novo status do agendamento (ex: 'confirmed', 'cancelled').
+ * @param {string} token - Token de autenticação do usuário.
+ * @returns {Promise<void>} Uma promessa que resolve sem valor em caso de sucesso.
+ * @throws {Error} Se a requisição falhar ou retornar um erro.
+ */
 const updateAppointmentStatus = async (appointmentId, status, token) => {
   try {
     const res = await fetch(`/api/appointments/${appointmentId}`, {
@@ -53,6 +78,14 @@ const updateAppointmentStatus = async (appointmentId, status, token) => {
   }
 };
 
+/**
+ * @function deleteAppointment
+ * @description Exclui um agendamento específico.
+ * @param {string} appointmentId - ID do agendamento a ser excluído.
+ * @param {string} token - Token de autenticação do usuário.
+ * @returns {Promise<void>} Uma promessa que resolve sem valor em caso de sucesso.
+ * @throws {Error} Se a requisição falhar ou retornar um erro.
+ */
 const deleteAppointment = async (appointmentId, token) => {
   try {
     const res = await fetch(`/api/appointments/${appointmentId}`, {
@@ -71,6 +104,14 @@ const deleteAppointment = async (appointmentId, token) => {
   }
 };
 
+/**
+ * @function createAppointment
+ * @description Cria um novo agendamento.
+ * @param {object} appointmentData - Dados do agendamento a ser criado (employee, service, date, startTime).
+ * @param {string} token - Token de autenticação do usuário.
+ * @returns {Promise<object>} Uma promessa que resolve com os dados do agendamento criado.
+ * @throws {Error} Se a requisição falhar ou retornar um erro.
+ */
 const createAppointment = async (appointmentData, token) => {
   try {
     const res = await fetch('/api/appointments', {
