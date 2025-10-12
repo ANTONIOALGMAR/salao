@@ -8,7 +8,10 @@ const {
   updateAppointment,
   deleteAppointment,
   getAvailableSlots,
+  getEmployeeAppointments,
 } = require('../controllers/appointmentController');
+
+const { protect } = require('../middleware/authMiddleware');
 
 router.route('/').post(createAppointment).get(getAppointments);
 router
@@ -17,5 +20,6 @@ router
   .put(updateAppointment)
   .delete(deleteAppointment);
 router.route('/available/:employeeId/:date').get(getAvailableSlots);
+router.route('/employee/:employeeId').get(protect, getEmployeeAppointments);
 
 module.exports = router;

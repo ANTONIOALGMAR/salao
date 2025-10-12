@@ -25,6 +25,9 @@ app.get('/', (req, res) => {
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/services', require('./routes/serviceRoutes'));
 app.use('/api/appointments', require('./routes/appointmentRoutes'));
+app.use('/api/reviews', require('./routes/reviewRoutes'));
+app.use('/api/notifications', require('./routes/notificationRoutes'));
+app.use('/api/loyalty', require('./routes/loyaltyRoutes'));
 
 // Error Handling Middleware
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');

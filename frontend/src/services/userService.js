@@ -5,13 +5,9 @@
  * @returns {Promise<Array>} Uma promessa que resolve com uma lista de objetos de funcionários.
  * @throws {Error} Se a requisição falhar ou retornar um erro.
  */
-const getEmployees = async (token) => {
+const getEmployees = async () => {
   try {
-    const res = await fetch('/api/users?role=employee', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await fetch('/api/users/employees');
     const employees = await res.json();
     if (res.ok) {
       return employees;

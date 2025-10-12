@@ -42,4 +42,23 @@ const admin = (req, res, next) => {
   }
 };
 
-module.exports = { protect, admin };
+const authorize = (roles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      res.status(401);
+      throw new Error('Not authorized, no user found');
+    }
+
+    // Se roles for uma string, converte para array
+    const allowedRoles = Array.isArray(roles) ? roles : [roles];
+    
+    if (allowedRoles.includes(req.user.role)) {
+      next();
+    } else {
+      res.status(403);
+      throw new Error(`Role ${req.user.role} not authorized to access this resource`);
+    }
+  };
+};
+
+module.exports = { protect, admin, authorize };

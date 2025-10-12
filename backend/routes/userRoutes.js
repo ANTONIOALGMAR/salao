@@ -5,6 +5,7 @@ const {
   authUser,
   registerUser,
   getUsers,
+  getEmployeesForClients,
 } = require('../controllers/userController');
 
 const { protect, admin } = require('../middleware/authMiddleware');
@@ -17,5 +18,6 @@ router.use((req, res, next) => {
 router.post('/', registerUser);
 router.get('/', protect, admin, getUsers);
 router.post('/login', authUser);
+router.get('/employees', getEmployeesForClients);
 
 module.exports = router;

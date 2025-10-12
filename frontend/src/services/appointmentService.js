@@ -140,4 +140,43 @@ export {
   updateAppointmentStatus,
   deleteAppointment,
   createAppointment,
+  getEmployeeAppointments,
+};
+
+/**
+ * @function getEmployeeAppointments
+ * @description Busca agendamentos para um profissional específico em um período.
+ * @param {string} employeeId - ID do profissional.
+ * @param {string} startDate - Data de início (formato YYYY-MM-DD).
+ * @param {string} endDate - Data de fim (formato YYYY-MM-DD).
+ * @returns {Promise<Array>} Uma promessa que resolve com uma lista de agendamentos do profissional.
+ * @throws {Error} Se a requisição falhar ou retornar um erro.
+ */
+const getEmployeeAppointments = async (employeeId, startDate, endDate) => {
+  try {
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const token = userInfo ? userInfo.token : null;
+
+    if (!token) {
+      throw new Error('Usuário não autenticado.');
+    }
+
+    const res = await fetch(
+      `/api/appointments/employee/${employeeId}?startDate=${startDate}&endDate=${endDate}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    const appointments = await res.json();
+    if (res.ok) {
+      return appointments;
+    } else {
+      throw new Error(appointments.message || 'Erro ao carregar agendamentos do profissional.');
+    }
+  } catch (error) {
+    console.error('Erro ao buscar agendamentos do profissional:', error);
+    throw error;
+  }
 };

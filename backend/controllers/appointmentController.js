@@ -70,6 +70,7 @@ const getAppointments = asyncHandler(async (req, res) => {
     .populate('client', 'name email')
     .populate('employee', 'name email')
     .populate('service', 'name price duration');
+  console.log('Fetched appointments:', JSON.stringify(appointments, null, 2)); // Add this line
   res.json(appointments);
 });
 
@@ -180,6 +181,38 @@ const getAvailableSlots = asyncHandler(async (req, res) => {
   res.json(availableSlots);
 });
 
+// @desc    Get appointments for a specific employee within a date range
+// @route   GET /api/appointments/employee/:employeeId
+// @access  Private/Employee & Admin
+const getEmployeeAppointments = asyncHandler(async (req, res) => {
+  const { employeeId } = req.params;
+  const { startDate, endDate } = req.query; // Expecting YYYY-MM-DD format
+
+  // Basic validation for employeeId
+  if (!employeeId) {
+    res.status(400);
+    throw new Error('Please provide an employee ID');
+  }
+
+  // Construct date query
+  const dateQuery = {};
+  if (startDate) {
+    dateQuery.$gte = new Date(startDate);
+  }
+  if (endDate) {
+    dateQuery.$lte = new Date(endDate);
+  }
+
+  const appointments = await Appointment.find({
+    employee: employeeId,
+    date: dateQuery,
+  })
+    .populate('client', 'name email')
+    .populate('service', 'name price duration');
+
+  res.json(appointments);
+});
+
 module.exports = {
   createAppointment,
   getAppointments,
@@ -187,4 +220,5 @@ module.exports = {
   updateAppointment,
   deleteAppointment,
   getAvailableSlots,
+  getEmployeeAppointments,
 };

@@ -22,6 +22,37 @@ const UserSchema = mongoose.Schema(
       enum: ['admin', 'employee', 'client'], // Define roles
       default: 'client',
     },
+    // Campos adicionais para clientes
+    phone: {
+      type: String,
+      trim: true,
+    },
+    birthdate: {
+      type: Date,
+    },
+    address: {
+      street: String,
+      city: String,
+      state: String,
+      zipCode: String,
+    },
+    preferences: {
+      preferredServices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }],
+      preferredEmployees: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+      notes: String,
+    },
+    // Campos para o sistema de fidelidade
+    loyaltyPoints: {
+      type: Number,
+      default: 0,
+    },
+    visitHistory: [
+      {
+        date: Date,
+        service: { type: mongoose.Schema.Types.ObjectId, ref: 'Service' },
+        employee: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      },
+    ],
   },
   {
     timestamps: true,

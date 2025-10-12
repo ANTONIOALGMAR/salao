@@ -74,4 +74,12 @@ const getUsers = asyncHandler(async (req, res) => {
   res.json(users);
 });
 
-module.exports = { authUser, registerUser, getUsers };
+// @desc    Get employees (users with role 'employee')
+// @route   GET /api/users/employees
+// @access  Public (or Private/Authenticated if needed)
+const getEmployeesForClients = asyncHandler(async (req, res) => {
+  const employees = await User.find({ role: 'employee' }).select('-password');
+  res.json(employees);
+});
+
+module.exports = { authUser, registerUser, getUsers, getEmployeesForClients };

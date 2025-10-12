@@ -29,9 +29,9 @@ export const renderAdminAppointmentsPage = (adminContentArea, userInfo) => {
             .map(
               (app) => `
             <div class="bg-white p-4 rounded-lg shadow-md mb-2">
-              <p><strong>Cliente:</strong> ${app.client.name}</p>
-              <p><strong>Profissional:</strong> ${app.employee.name}</p>
-              <p><strong>Serviço:</strong> ${app.service.name}</p>
+              <p><strong>Cliente:</strong> ${app.client ? app.client.name : 'N/A'}</p>
+              <p><strong>Profissional:</strong> ${app.employee ? app.employee.name : 'N/A'}</p>
+              <p><strong>Serviço:</strong> ${app.service ? app.service.name : 'N/A'}</p>
               <p><strong>Data:</strong> ${new Date(app.date).toLocaleDateString()}</p>
               <p><strong>Horário:</strong> ${app.startTime} - ${app.endTime}</p>
               <p><strong>Status:</strong> 

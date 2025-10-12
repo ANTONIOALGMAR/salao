@@ -73,7 +73,7 @@ const showAppointmentsPage = async (renderContent) => {
    */
   const populateEmployees = async () => {
     try {
-      const employees = await getEmployees(userInfo.token);
+      const employees = await getEmployees();
       employeeSelect.innerHTML =
         '<option value="">Selecione um profissional</option>';
       employees.forEach((emp) => {
@@ -122,6 +122,7 @@ const showAppointmentsPage = async (renderContent) => {
 
     try {
       const slots = await getAvailableSlots(employeeId, date);
+      console.log('Available slots:', slots); // Add this line
       timeSlotSelect.innerHTML =
         '<option value="">Selecione um horário</option>';
       if (slots.length > 0) {
@@ -152,9 +153,9 @@ const showAppointmentsPage = async (renderContent) => {
           .map(
             (app) => `
           <div class="bg-white p-4 rounded-lg shadow-md mb-2">
-            <p><strong>Cliente:</strong> ${app.client.name}</p>
-            <p><strong>Profissional:</strong> ${app.employee.name}</p>
-            <p><strong>Serviço:</strong> ${app.service.name}</p>
+            <p><strong>Cliente:</strong> ${app.client ? app.client.name : 'N/A'}</p>
+            <p><strong>Profissional:</strong> ${app.employee ? app.employee.name : 'N/A'}</p>
+            <p><strong>Serviço:</strong> ${app.service ? app.service.name : 'N/A'}</p>
             <p><strong>Data:</strong> ${new Date(app.date).toLocaleDateString()}</p>
             <p><strong>Horário:</strong> ${app.startTime} - ${app.endTime}</p>
             <p><strong>Status:</strong> 
@@ -225,6 +226,7 @@ const showAppointmentsPage = async (renderContent) => {
   appointmentForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const appointmentData = {
+      client: userInfo._id, // Add this line
       employee: employeeSelect.value,
       service: serviceSelect.value,
       date: appointmentDateInput.value,
