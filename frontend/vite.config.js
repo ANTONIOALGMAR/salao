@@ -1,10 +1,8 @@
 import { defineConfig } from 'vite';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  plugins: [],
-  css: {
-    postcss: './postcss.config.js',
-  },
+  plugins: [tailwindcss()],
   server: {
     proxy: {
       '/api': {
