@@ -1,6 +1,9 @@
 const asyncHandler = require('express-async-handler');
 const Appointment = require('../models/Appointment');
 const Service = require('../models/Service');
+const LoyaltyProgram = require('../models/LoyaltyProgram'); // Add this
+const LoyaltyTransaction = require('../models/LoyaltyTransaction'); // Add this
+const { processAppointmentPoints } = require('./loyaltyController'); // Add this
 
 // Helper function to calculate end time
 const calculateEndTime = (startTime, duration) => {
@@ -104,10 +107,35 @@ const updateAppointment = asyncHandler(async (req, res) => {
     appointment.startTime = startTime || appointment.startTime;
     appointment.status = status || appointment.status;
 
-    // Recalculate endTime if startTime or service changes (not implemented here for simplicity)
-    // For a real app, you'd re-fetch service details and recalculate endTime
-
     const updatedAppointment = await appointment.save();
+
+    // Se o status foi atualizado para 'concluído', processe os pontos de fidelidade
+    if (status === 'completed') {
+      try {
+        // Criamos objetos req/res simulados para chamar a função do outro controller
+        const fakeReq = { body: { appointmentId: appointment._id.toString() } };
+        const fakeRes = {
+          status: function(code) { 
+            // Log de status, se necessário
+            console.log(`Loyalty processing returned status: ${code}`);
+            return this; // Permite encadeamento como res.status(400).json(...)
+          },
+          json: function(data) {
+            // Log do resultado, se necessário
+            console.log('Loyalty processing result:', data);
+          },
+        };
+
+        await processAppointmentPoints(fakeReq, fakeRes);
+        console.log(`Pontos para o agendamento ${appointment._id} processados.`);
+
+      } catch (loyaltyError) {
+        // Se o processamento de pontos falhar, não quebra a operação principal.
+        // Apenas registra o erro no console para depuração futura.
+        console.error(`Falha ao processar pontos de fidelidade para o agendamento ${appointment._id}:`, loyaltyError.message);
+      }
+    }
+
     res.json(updatedAppointment);
   } else {
     res.status(404);
