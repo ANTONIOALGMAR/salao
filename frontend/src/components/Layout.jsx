@@ -44,7 +44,10 @@ const Layout = () => {
             ) : (
               <>
                 {user.role === 'client' && (
-                  <li><Link to="/cliente" className="hover:text-gray-300">Meus Agendamentos</Link></li>
+                  <>
+                    <li><Link to="/cliente" className="hover:text-gray-300">Meus Agendamentos</Link></li>
+                    <li><Link to="/fidelidade" className="hover:text-gray-300">Fidelidade</Link></li>
+                  </>
                 )}
                 {user.role === 'admin' && (
                   <li><Link to="/admin" className="hover:text-gray-300">Admin</Link></li>

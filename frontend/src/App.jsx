@@ -6,6 +6,7 @@ import ServicesPage from './pages/ServicesPage.jsx';
 import AppointmentsPage from './pages/AppointmentsPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
+import LoyaltyPage from './pages/LoyaltyPage.jsx'; // Add this
 import CustomerDashboard from './pages/CustomerDashboard.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
 import EmployeeDashboard from './pages/EmployeeDashboard.jsx';
@@ -31,8 +32,13 @@ const App = () => {
         <Route path="agendamentos" element={<AppointmentsPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="cadastro" element={<RegisterPage />} />
-        
+
         {/* Rotas protegidas */}
+        <Route path="fidelidade" element={
+          <ProtectedRoute allowedRoles={['client']}>
+            <LoyaltyPage />
+          </ProtectedRoute>
+        } />
         <Route path="cliente" element={
           <ProtectedRoute allowedRoles={['client']}>
             <CustomerDashboard />
