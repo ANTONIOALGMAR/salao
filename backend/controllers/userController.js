@@ -11,12 +11,20 @@ const authUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
+    const token = generateToken(user._id);
+    // Define cookie httpOnly para reduzir risco de XSS
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      maxAge: 60 * 60 * 1000, // 1h
+    });
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
-      token: generateToken(user._id),
+      token, // Mantém no body para compatibilidade
     });
   } else {
     res.status(401);
@@ -45,12 +53,20 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
+    const token = generateToken(user._id);
+    // Define cookie httpOnly também no registro
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      maxAge: 60 * 60 * 1000,
+    });
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
-      token: generateToken(user._id),
+      token,
     });
   } else {
     res.status(400);

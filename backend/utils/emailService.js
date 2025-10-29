@@ -1,5 +1,13 @@
 const nodemailer = require('nodemailer');
 
+// Em produção, exigir credenciais reais; em dev, permitir defaults controlados
+if (
+  process.env.NODE_ENV === 'production' &&
+  (!process.env.EMAIL_HOST || !process.env.EMAIL_PORT || !process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD)
+) {
+  throw new Error('Configuração de email ausente em produção (EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASSWORD)');
+}
+
 // Configuração do transporte de email
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST || 'smtp.example.com',

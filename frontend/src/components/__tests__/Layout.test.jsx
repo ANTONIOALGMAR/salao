@@ -1,12 +1,20 @@
 import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/dom';
-import { Layout } from '../Layout';
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import Layout from '../Layout';
 
 describe('Layout component', () => {
   it('should render the header, main, and footer sections', () => {
-    const container = document.createElement('div');
-    container.innerHTML = Layout('<div>Test Content</div>');
-    document.body.appendChild(container);
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route index element={<div>Test Content</div>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
 
     const headerElement = document.querySelector('header');
     const mainElement = document.querySelector('main');
@@ -18,3 +26,5 @@ describe('Layout component', () => {
     expect(mainElement).toHaveTextContent('Test Content');
   });
 });
+
+
